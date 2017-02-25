@@ -2,6 +2,25 @@ var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+var express = require('express');
+var app = express();
+var port = process.env.PORT || 5000;
+
+app.use(express.static('public'));
+app.use(express.static('src/views'));
+
+app.get('/', function (req, res) {
+    res.send('hello');
+});
+
+app.get('/book', function (req, res) {
+    res.send('book');
+});
+
+app.listen(port, function (err) {
+    console.log('running on', port);
+});
+
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/tasks-nodejs-quickstart.json
@@ -37,7 +56,7 @@ function authorize(credentials, callback) {
     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
     // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, function(err, token) {
+    fs.readFile(TOKEN_PATH, function (err, token) {
         if (err) {
             getNewToken(oauth2Client, callback);
         } else {
@@ -66,9 +85,9 @@ function getNewToken(oauth2Client, callback) {
         input: process.stdin,
         output: process.stdout
     });
-    rl.question('Enter the code from that page here: ', function(code) {
+    rl.question('Enter the code from that page here: ', function (code) {
         rl.close();
-        oauth2Client.getToken(code, function(err, token) {
+        oauth2Client.getToken(code, function (err, token) {
             if (err) {
                 console.log('Error while trying to retrieve access token', err);
                 return;
@@ -107,7 +126,7 @@ function listTaskLists(auth) {
 
     service.tasklists.list({
         auth: auth
-    }, function(err, response) {
+    }, function (err, response) {
         if (err) {
             console.log('The API returned an error: ' + err);
             return;
