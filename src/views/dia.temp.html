@@ -1,14 +1,20 @@
 <md-content layout-padding="">
-    <div>
+    <div role="dialog" aria-label="Eat me!" layout="column" layout-align="center center">
+        <md-toolbar layout="row" >
+            <div class="md-toolbar-tools">
+                <span ng-show="isNewTask">Add a New Task</span>
+                <span ng-show="!isNewTask">Edit a Task</span>
+            </div>
+        </md-toolbar>
         <form name="taskForm">
+            <md-input-container class="md-block" flex-gt-xs="">
+                <label>Task Title</label>
+                <input ng-model="task.title">
+            </md-input-container>
             <div layout-gt-xs="row">
-                <md-input-container class="md-block" flex-gt-xs="">
-                    <label>Task</label>
-                    <input ng-model="task.title">
-                </md-input-container>
                 <md-input-container>
                     <label>Created date</label>
-                    <md-datepicker ng-model="task.updated"></md-datepicker>
+                    <md-datepicker ng-disabled="!isNewTask" ng-model="task.updated"></md-datepicker>
                 </md-input-container>
 
                 <md-input-container>
@@ -18,8 +24,8 @@
             </div>
 
             <md-input-container class="md-block">
-                <label>Description</label>
-                <textarea ng-model="task.notes" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+                <label>Notes</label>
+                <textarea ng-model="task.notes" md-maxlength="150" rows="2" md-select-on-focus=""></textarea>
             </md-input-container>
 
             <md-button class="md-primary md-raised" ng-click="done(task)">

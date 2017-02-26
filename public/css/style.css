@@ -1,3 +1,13 @@
 md-backdrop{
     position: fixed;
 }
+
+#addTaskBtn{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+.md-datepicker-input-mask{
+    overflow:hidden;
+}
