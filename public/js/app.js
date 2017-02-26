@@ -8,39 +8,38 @@ function AppCtrl($scope, $mdDialog, $http) {
             console.log(response.data);
             $scope.todos = response.data;
         });
-    $scope.save = function () {
-        if (!$scope.newTodo || $scope.newTodo.length < 1) return;
-        var todo = new Todos({name: $scope.newTodo, completed: false});
-
-        todo.$save(function () {
-            $scope.todos.push(todo);
-            $scope.newTodo = ''; // clear textbox
-        });
-    };
+    // $scope.save = function () {
+    //     if (!$scope.newTodo || $scope.newTodo.length < 1) return;
+    //     var todo = new Todos({name: $scope.newTodo, completed: false});
+    //
+    //     todo.$save(function () {
+    //         $scope.todos.push(todo);
+    //         $scope.newTodo = ''; // clear textbox
+    //     });
+    // };
 
 
     $scope.addTask = function (event, index) {
         $scope.editing = angular.copy($scope.todos[index]);
-        showDialog(index, false, event);
+        showDialog(index, true, event);
     };
 
-    $scope.cancel = function (index) {
-        $scope.todos[index] = angular.copy($scope.editing[index]);
-        $scope.editing[index] = false;
-    };
+    // $scope.cancel = function (index) {
+    //     $scope.todos[index] = angular.copy($scope.editing[index]);
+    //     $scope.editing[index] = false;
+    // };
 
-    $scope.remove = function (index) {
-        var todo = $scope.todos[index];
-        Todos.remove({id: todo._id}, function () {
-            $scope.todos.splice(index, 1);
-        });
-    };
+    // $scope.remove = function (index) {
+    //     var todo = $scope.todos[index];
+    //     Todos.remove({id: todo._id}, function () {
+    //         $scope.todos.splice(index, 1);
+    //     });
+    // };
 
     $scope.selectTask = function (event, index) {
         $scope.editing = angular.copy($scope.todos[index]);
-        console.log($scope.editing);
+        console.log('editing', $scope.editing);
         showDialog(index, false, event);
-
     };
 
     function showDialog(index, isNewTask, event) {
@@ -52,7 +51,8 @@ function AppCtrl($scope, $mdDialog, $http) {
             targetEvent: event,
             locals: {
                 task: $scope.todos[index],
-                isNewTask: isNewTask
+                isNewTask: isNewTask,
+                editing : $scope.editing
             }
         })
             .then(
@@ -61,19 +61,23 @@ function AppCtrl($scope, $mdDialog, $http) {
                 }, function () {
                     $scope.status = 'You cancelled the dialog.';
                 });
-    };
+    }
 }
 function DialogController($scope, $mdDialog, task, isNewTask) {
+    var todayDate = new Date();
     $scope.task = task;
-    console.log(isNewTask);
-    $scope.isNewTask = isNewTask;
+    $scope.isNewTask = locals.isNewTask;
+    $scope.editing = locals.editing;
+
+    if (isNewTask) {
+        $scope.task = {updated: todayDate};
+    }
     if (task) {
         if ($scope.task.hasOwnProperty('updated')) {
             $scope.task.updated = new Date($scope.task.updated);
         }
         if ($scope.task.hasOwnProperty('due')) {
             $scope.task.due = new Date($scope.task.due);
-            console.log($scope.task.due);
         }
     }
 
@@ -91,6 +95,7 @@ function DialogController($scope, $mdDialog, task, isNewTask) {
         $mdDialog.hide(task);
     };
 }
+
 
 
 

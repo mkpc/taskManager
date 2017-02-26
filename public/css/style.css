@@ -2,12 +2,21 @@ md-backdrop{
     position: fixed;
 }
 
-#addTaskBtn{
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-}
+/*#addTaskBtn{*/
+    /*position: absolute;*/
+    /*right: 10px;*/
+    /*bottom: 10px;*/
+/*}*/
 
 .md-datepicker-input-mask{
     overflow:hidden;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+
+#taskMdList{
+    padding-left: 10%;
+    padding-right: 10%;
 }

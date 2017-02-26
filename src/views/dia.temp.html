@@ -1,40 +1,56 @@
-<md-content layout-padding="">
-    <div role="dialog" aria-label="Eat me!" layout="column" layout-align="center center">
-        <md-toolbar layout="row" >
+<md-content layout-padding="" ng-cloak class="md-inline-form">
+    <div role="dialog" aria-label="Task Dialog" layout="column" layout-align="center center">
+        <md-toolbar layout="row">
             <div class="md-toolbar-tools">
                 <span ng-show="isNewTask">Add a New Task</span>
                 <span ng-show="!isNewTask">Edit a Task</span>
+
             </div>
         </md-toolbar>
+
         <form name="taskForm">
-            <md-input-container class="md-block" flex-gt-xs="">
-                <label>Task Title</label>
-                <input ng-model="task.title">
-            </md-input-container>
             <div layout-gt-xs="row">
-                <md-input-container>
-                    <label>Created date</label>
-                    <md-datepicker ng-disabled="!isNewTask" ng-model="task.updated"></md-datepicker>
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Task Title</label>
+                    <input ng-model="task.title">
                 </md-input-container>
 
-                <md-input-container>
-                    <label>Due date</label>
-                    <md-datepicker ng-model="task.due"></md-datepicker>
-                </md-input-container>
+
+            </div>
+            <div layout-gt-xs="row">
+
+                <div layout-gt-xs="column">
+                    <md-input-container class="md-block">
+                        <label>Notes</label>
+                        <textarea ng-model="task.notes" rows="5" md-select-on-focus=""></textarea>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-xs="column">
+                    <md-input-container class="md-block">
+                        <label>Created date</label>
+                        <md-datepicker disabled="" ng-model="task.updated"></md-datepicker>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Due date</label>
+                        <md-datepicker ng-model="task.due"></md-datepicker>
+                    </md-input-container>
+                </div>
+            </div>
+            <md-checkbox name="tos" >
+                Completed
+            </md-checkbox>
+            <div layout-align="center center" layout="row">
+
+                <md-button class="md-primary md-raised" ng-click="done(task)">
+                    Done
+                </md-button>
+
+                <md-button class="md-warn md-raised" ng-click="delete(task)">
+                    Delete
+                </md-button>
             </div>
 
-            <md-input-container class="md-block">
-                <label>Notes</label>
-                <textarea ng-model="task.notes" md-maxlength="150" rows="2" md-select-on-focus=""></textarea>
-            </md-input-container>
-
-            <md-button class="md-primary md-raised" ng-click="done(task)">
-                Done
-            </md-button>
-
-            <md-button class="md-primary md-raised" ng-click="delete(task)">
-                Delete
-            </md-button>
         </form>
     </div>
 </md-content>
