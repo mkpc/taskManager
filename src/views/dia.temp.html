@@ -1,33 +1,35 @@
-    <md-content layout-padding="">
-        <div>
-            <form name="userForm">
-                <div layout-gt-xs="row">
-                    <md-input-container class="md-block" flex-gt-xs="">
-                        <label>Task</label>
-                        <input ng-model="user.what">
-                    </md-input-container>
-                    <md-input-container>
-                        <label>Created date</label>
-                        <md-datepicker ng-model=""></md-datepicker>
-                    </md-input-container>
-
-                    <md-input-container>
-                        <label>Due date</label>
-                        <md-datepicker ng-model=""></md-datepicker>
-                    </md-input-container>
-                </div>
-
-                <md-input-container class="md-block">
-                    <label>Description</label>
-                    <textarea ng-model="user.notes" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+<md-content layout-padding="">
+    <div>
+        <form name="taskForm">
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs="">
+                    <label>Task</label>
+                    <input ng-model="task.title">
                 </md-input-container>
-                <md-button class="md-primary md-raised" ng-click="answer(user)">
-                    Done
-                </md-button>
-                <md-button class="md-primary md-raised" ng-click="delete(user)">
-                    Delete
-                </md-button>
-            </form>
-        </div>
-    </md-content>
+                <md-input-container>
+                    <label>Created date</label>
+                    <md-datepicker ng-model="task.updated"></md-datepicker>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Due date</label>
+                    <md-datepicker ng-model="task.due"></md-datepicker>
+                </md-input-container>
+            </div>
+
+            <md-input-container class="md-block">
+                <label>Description</label>
+                <textarea ng-model="task.notes" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+            </md-input-container>
+
+            <md-button class="md-primary md-raised" ng-click="done(task)">
+                Done
+            </md-button>
+
+            <md-button class="md-primary md-raised" ng-click="delete(task)">
+                Delete
+            </md-button>
+        </form>
+    </div>
+</md-content>
 

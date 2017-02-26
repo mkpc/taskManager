@@ -21,7 +21,7 @@
                         <div layout="row">
                             <div flex=>
                                 <label>Search:</label>
-                                <input ng-model="search.what">
+                                <input ng-model="search.title">
                             </div>
                             <div>
                                 <md-button class="md-secondary" ng-click="">Select All</md-button>
@@ -38,10 +38,10 @@
                 <md-list-item class="md-2-line" ng-repeat="item in todos | filter: search">
                     <md-checkbox></md-checkbox>
                     <div class="md-list-item-text" layout="column">
-                        <h3>{{ item.what }}</h3>
-                        <p>{{ item.when }}</p>
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.updated }}</p>
                     </div>
-                    <md-button class="md-secondary" ng-click="showAdvanced($event, $index)">More Info</md-button>
+                    <md-button class="md-secondary" ng-click="selectTask($event, $index)">More Info</md-button>
                 </md-list-item>
                 <md-divider></md-divider>
             </md-list>
