@@ -37,25 +37,30 @@
                     </md-input-container>
                 </div>
             </div>
-            <md-checkbox name="tos" >
+            <md-checkbox ng-model="isCompleted">
                 Completed
             </md-checkbox>
             <div layout-align="center center" layout="row">
+                <div ng-show="isNewTask">
+                    <md-button class="md-primary md-raised" ng-click="add(editing)">
+                        <span>Add</span>
+                    </md-button>
 
-                <md-button ng-show="!isNewTask" class="md-primary md-raised" ng-click="save(editing)">
-                    <span >Save</span>
-                </md-button>
+                </div>
 
-                <md-button ng-show="isNewTask" class="md-primary md-raised" ng-click="add(editing)">
-                    <span >Add</span>
-                </md-button>
-
-                <md-button class="md-warn md-raised" ng-click="delete(editing)">
-                    Delete
+                <div ng-show="!isNewTask">
+                    <md-button class="md-primary md-raised" ng-click="saveTask(editing)">
+                        <span>Save</span>
+                    </md-button>
+                    <md-button class="md-warn md-raised" ng-click="delete(editing)">
+                        Delete
+                    </md-button>
+                </div>
+                <md-button class=" md-raised" ng-click="cancel()">
+                    Cancel
                 </md-button>
             </div>
-
-        </div>
-    </form>
+        </form>
+    </div>
 </md-content>
 

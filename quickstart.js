@@ -6,30 +6,28 @@ var bodyParser = require("body-parser");
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 5000;
+var isAuthed = false;
+var service = google.tasks('v1');
 
+// var OAuth2Client = google.auth.OAuth2;
+// var task = google.tasks('v1');
+//
+// var CLIENT_ID = '337711831038-ptt8gohu94rtb3j2aqp8e5hahkceld0q.apps.googleusercontent.com';
+// var CLIENT_SECRET = 'WkH439pEYD8U1CVmMuE8ElYW';
+// var REDIRECT_URL = 'YOUR REDIRECT URL HERE';
+
+// var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+
+var SCOPE = 'https://www.googleapis.com/auth/tasks';
+
+const TASKLIST_ID = 'MTI1MjkyOTc4MTA3NzU5ODQ4NjI6MDow';
 app.use(express.static('public'));
 app.use(express.static('src/views'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
-//TODO: Send post request to Task API to update a Task
-app.post('/', function (req, res, next) {
-    console.log('POST : ',req.body);
-});
-
-//TODO: TaskID and TaskListID to Delete Task
-app.delete('/', function (req, res, next){
-    console.log('Delete request : ', req.body.id);
-});
-
-//TODO: Send put request to Task API to insert new Task
-app.put('/', function (req, res, next) {
-    console.log('PUT : ',req.body);
-
-});
-
-app.get('/tasks', function (req, res) {
+function getAuth(callback) {
 // Load client secrets from a local file.
     fs.readFile('client_secret.json', function processClientSecrets(err, content) {
         if (err) {
@@ -38,18 +36,15 @@ app.get('/tasks', function (req, res) {
         }
         // Authorize a client with the loaded credentials, then call the
         // Google Tasks API.
-        authorize(JSON.parse(content), listTaskLists);
-
+        authorize(JSON.parse(content), callback);
     });
-
-// If modifying these scopes, delete your previously saved credentials
+    // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/tasks-nodejs-quickstart.json
     var SCOPES = ['https://www.googleapis.com/auth/tasks'];
     var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
         process.env.USERPROFILE) + '/.credentials/';
     var TOKEN_PATH = TOKEN_DIR + 'tasks-nodejs-quickstart.json';
-
-
+    console.log(TOKEN_PATH);
     /**
      * Create an OAuth2 client with the given credentials, and then execute the
      * given callback function.
@@ -74,7 +69,6 @@ app.get('/tasks', function (req, res) {
             }
         });
     }
-
 
     /**
      * Get and store new token after prompting for user authorization, and then
@@ -122,15 +116,80 @@ app.get('/tasks', function (req, res) {
             }
         }
         fs.writeFile(TOKEN_PATH, JSON.stringify(token));
+        isAuthed = true;
         console.log('Token stored to ' + TOKEN_PATH);
     }
+}
 
-    function listTaskLists(auth) {
-        var service = google.tasks('v1');
+//TODO: Send post request to Task API to update a Task
+app.put('/', function (req, res, next) {
+    getAuth(updateTask);
+    function updateTask(auth) {
+        var task = {};
+        task.auth = auth;
+        task.tasklist = TASKLIST_ID;
+        task.task = req.body.id;
+        task.resource = req.body;
+        console.log(task);
+        service.tasks.update(task, function (err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+                return;
+            }
+            console.log('update res : ', response)
 
+        });
+        res.end();
+    }
+});
+
+//TODO: TaskID and TaskListID to Delete Task
+app.delete('/', function (req, res) {
+    console.log('Delete request : ', req.body);
+    getAuth(deleteTask);
+    function deleteTask(auth) {
+        var task = {};
+        task.auth = auth;
+        task.kind = "tasks#task";
+        task.tasklist = TASKLIST_ID;
+        task.task = req.body.id;
+        console.log(task);
+        service.tasks.delete(task, function (err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+                return;
+            }
+        });
+        res.end();
+    }
+});
+
+//TODO: Send put request to Task API to insert new Task
+app.post('/post', function (req, res, next) {
+    console.log('post : ', req.body);
+    getAuth(insertTask);
+    function insertTask(auth) {
+        var task = {};
+        task.auth = auth;
+        task.kind = "tasks#task";
+        task.tasklist = TASKLIST_ID;
+        task.resource = req.body;
+        console.log(task);
+        service.tasks.insert(task, function (err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+                return;
+            }
+        });
+    }
+});
+
+app.get('/tasks', function (req, res) {
+    getAuth(getAllTasks);
+    function getAllTasks(auth) {
         service.tasks.list({
             auth: auth,
-            tasklist: 'MTI1MjkyOTc4MTA3NzU5ODQ4NjI6MDow'
+            tasklist: TASKLIST_ID
         }, function (err, response) {
             if (err) {
                 console.log('The API returned an error: ' + err);
@@ -140,24 +199,22 @@ app.get('/tasks', function (req, res) {
             if (items.length == 0) {
                 console.log('No task lists found.');
             } else {
-                console.log();
-                console.log('Task lists:');
+                // return items;
                 res.send(items);
-
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
-                    console.log('%s (%s)', item.title, item.id);
-
-                }
+                //
+                // for (var i = 0; i < items.length; i++) {
+                //     var item = items[i];
+                //     console.log('%s (%s)', item.title, item.id);
+                //
+                // }
             }
         });
     }
-
 });
+
 
 app.listen(port, function (err) {
     console.log('running on', port);
 });
-
 
 module.exports = app;

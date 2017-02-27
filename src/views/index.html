@@ -30,12 +30,14 @@
                                 <input ng-model="search.title" placeholder="search task"/>
                             </md-input-container>
                         </div>
+                        <md-subheader class="md-primary">Showing {{filtered.length }} of {{tasks.length}} {{tasks.length <= 1 ? 'task' : 'tasks'}}</md-subheader>
+
                         <md-list>
-                            <md-list-item class="md-2-line" ng-repeat="item in tasks | filter: search">
-                                <md-checkbox class="md-primary" ng-checked="item.status === 'completed'"></md-checkbox>
+                            <md-list-item class="md-2-line" ng-repeat="item in filtered = (tasks | filter: search)">
+                                <md-checkbox class="md-primary" ng-checked="item.status === 'completed'" ng-click="toggleSelection($index)"></md-checkbox>
                                 <div class="md-list-item-text" ng-class="{strike : item.status === 'completed'}" layout="column">
                                     <h3>{{ item.title }}</h3>
-                                    <p>{{ item.updated }}</p>
+                                    <p >{{getShortDate(item.updated)}}</p>
                                 </div>
                                 <md-button class="md-secondary" ng-click="selectTask($event, $index)">EDIT
                                 </md-button>
