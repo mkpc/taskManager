@@ -2,18 +2,34 @@ var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+var bodyParser = require("body-parser");
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 5000;
 
 app.use(express.static('public'));
 app.use(express.static('src/views'));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
-console.log('hey')
+
+//TODO: Send post request to Task API to update a Task
+app.post('/', function (req, res, next) {
+    console.log('POST : ',req.body);
 });
 
-app.get('/book', function (req, res) {
+//TODO: TaskID and TaskListID to Delete Task
+app.delete('/', function (req, res, next){
+    console.log('Delete request : ', req.body.id);
+});
+
+//TODO: Send put request to Task API to insert new Task
+app.put('/', function (req, res, next) {
+    console.log('PUT : ',req.body);
+
+});
+
+app.get('/tasks', function (req, res) {
 // Load client secrets from a local file.
     fs.readFile('client_secret.json', function processClientSecrets(err, content) {
         if (err) {
@@ -28,7 +44,7 @@ app.get('/book', function (req, res) {
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/tasks-nodejs-quickstart.json
-    var SCOPES = ['https://www.googleapis.com/auth/tasks.readonly'];
+    var SCOPES = ['https://www.googleapis.com/auth/tasks'];
     var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
         process.env.USERPROFILE) + '/.credentials/';
     var TOKEN_PATH = TOKEN_DIR + 'tasks-nodejs-quickstart.json';
@@ -114,7 +130,7 @@ app.get('/book', function (req, res) {
 
         service.tasks.list({
             auth: auth,
-            tasklist : 'MTI1MjkyOTc4MTA3NzU5ODQ4NjI6MDow'
+            tasklist: 'MTI1MjkyOTc4MTA3NzU5ODQ4NjI6MDow'
         }, function (err, response) {
             if (err) {
                 console.log('The API returned an error: ' + err);
@@ -142,7 +158,6 @@ app.get('/book', function (req, res) {
 app.listen(port, function (err) {
     console.log('running on', port);
 });
-
 
 
 module.exports = app;
