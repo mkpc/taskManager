@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="en" ng-app="MyApp">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Angular Material style sheet -->
@@ -8,50 +8,88 @@
 
 </head>
 <body>
-<div ng-controller="AppCtrl" ng-cloak="" layout="row" class="listdemoBasicUsage" ng-app="MyApp">
-    <div class="lock-size" id="addTaskBtn" layout="row" layout-align="end center">
-        <md-button class="md-fab  md-fab-bottom-right md-primary" aria-label="Add Task" ng-click="addTask()">
-            <ng-md-icon icon="playlist_add" style="fill:white"></ng-md-icon>
-        </md-button>
-    </div>
-    <div layout="column" class="relative" layout-fill role="main">
-        <md-toolbar layout="row">
-            <div class="md-toolbar-tools">
-                <span>My to do list</span>
-            </div>
-        </md-toolbar>
-        <md-content flex md-scroll-y>
-            <ui-view layout="column" layout-fill layout-padding>
-                <md-list id="taskMdList">
-                    <md-list-content>
-                        <div layout="row" layout-align="center center">
-                            <md-input-container id="searchBar" flex>
-                                <label>&nbsp;</label>
-                                <input ng-model="search.title" placeholder="search task"/>
-                            </md-input-container>
-                        </div>
-                        <md-subheader class="md-primary">Showing {{filtered.length }} of {{tasks.length}} {{tasks.length <= 1 ? 'task' : 'tasks'}}</md-subheader>
 
-                        <md-list>
-                            <md-list-item class="md-2-line" ng-repeat="item in filtered = (tasks | filter: search)">
-                                <md-checkbox class="md-primary" ng-checked="item.status === 'completed'" ng-click="toggleSelection($index)"></md-checkbox>
-                                <div class="md-list-item-text" ng-class="{strike : item.status === 'completed'}" layout="column">
-                                    <h3>{{ item.title }}</h3>
-                                    <p >{{getShortDate(item.updated)}}</p>
-                                </div>
-                                <md-button class="md-secondary" ng-click="selectTask($event, $index)">EDIT
-                                </md-button>
-                                <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
-                                <md-divider hide-gt-sm ng-if="!$last"></md-divider>
-                            </md-list-item>
-                        </md-list>
-                    </md-list-content>
-                </md-list>
-            </ui-view>
-        </md-content>
-    </div>
+
+<div ng-controller="AppCtrl" ng-cloak="" layout="row" class="listdemoBasicUsage">
+
+    <section layout="row" flex>
+        <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')"
+                    md-whiteframe="4">
+
+            <md-toolbar class="md-theme-indigo">
+                <h1 class="md-toolbar-tools">Setting</h1>
+            </md-toolbar>
+            <md-content layout-padding="">
+                <md-list ng-cloak>
+
+                    <md-subheader class="md-no-sticky">Sorted by</md-subheader>
+                    <md-radio-group  ng-model="sortedBy">
+                        <md-radio-button value="title" class="md-primary" >Name</md-radio-button>
+                        <md-radio-button value="updated" class="md-primary"> Date</md-radio-button>
+                        <md-radio-button value="status" class="md-primary"> status</md-radio-button>
+                    </md-radio-group>
+
+                    <md-divider></md-divider>
+
+
+
+            </md-content>
+
+        </md-sidenav>
+
+
+        <div class="lock-size" id="addTaskBtn" layout="row" layout-align="end center">
+            <md-button class="md-fab  md-fab-bottom-right md-primary" aria-label="Add Task" ng-click="addTask()">
+                <ng-md-icon icon="playlist_add" style="fill:white"></ng-md-icon>
+            </md-button>
+        </div>
+        <div layout="column" class="relative" layout-fill role="main">
+            <md-toolbar md-scroll-shrink>
+                <div class="md-toolbar-tools">
+                    <span>My task manager</span>
+                    <span flex></span>
+                    <md-button class="md-raised" ng-click="signIn()" ng-show="!isAuthed">
+                        Sign In
+                    </md-button>
+                </div>
+            </md-toolbar>
+            <md-content flex md-scroll-y ng-show="isAuthed">
+                <ui-view layout="column" layout-fill layout-padding>
+                    <md-list id="taskMdList">
+                        <md-list-content>
+                            <div layout="row" layout-align="center center">
+                                <md-input-container id="searchBar" flex>
+                                    <label>&nbsp;</label>
+                                    <input ng-model="search.title" placeholder="search task"/>
+                                </md-input-container>
+                            </div>
+                            <md-subheader class="md-primary">Showing {{filtered.length }} of {{tasks.length}}
+                                {{tasks.length
+                                <= 1 ? 'task' : 'tasks'}}
+                            </md-subheader>
+                            <md-list>
+                                <md-list-item class="md-2-line"
+                                              ng-repeat="item in filtered = (tasks | filter: (search ) |orderBy : sortedBy)">
+                                        <md-checkbox class="md-primary" ng-checked="item.status === 'completed'"
+                                                     ng-click="toggleSelection(item)"></md-checkbox>
+                                        <div class="md-list-item-text" ng-class="{strike : item.status === 'completed'}"
+                                             layout="column">
+                                            <h3>{{ item.title }}</h3>
+                                            <p>{{getShortDate(item.updated)}}</p>
+                                        </div>
+                                        <md-button class="md-secondary" ng-click="selectTask($event, item)">EDIT
+                                        </md-button>
+                                        <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
+                                        <md-divider hide-gt-sm ng-if="!$last"></md-divider>
+                                </md-list-item>
+                            </md-list>
+                        </md-list-content>
+                    </md-list>
+                </ui-view>
+            </md-content>
+        </div>
+    </section>
 </div>
-
 <!-- Angular Material requires Angular.js Libraries -->
 
 <script src="lib/angular/angular.js"></script>

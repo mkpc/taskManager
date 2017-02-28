@@ -3,43 +3,80 @@ var app = angular.module('MyApp', ['ngRoute', 'ngMaterial', 'ngMessages', 'ngRes
     .controller('DialogController', DialogController);
 
 
-function AppCtrl($scope, $mdDialog, $http, $rootScope) {
-    $scope.toggleSelection = function (index) {
+function AppCtrl($scope, $mdDialog, $http, $rootScope, $mdToast) {
+
+
+    $scope.sortedBy = 'title';
+
+    $scope.isSortedBy = function (colName) {
+        return colName == $scope.sortCol;
+    };
+
+    $scope.sortCol = 'rank';
+
+    $rootScope.isAuthed = false;
+    $scope.signIn = function () {
+        $http.get('/auth/tasks').then(function (response) {
+            window.open(response.data);
+        })
+    };
+
+    $scope.getTaskIndex = function (taskID) {
+        return $rootScope.tasks.map(function (e) {
+            return e.id;
+        }).indexOf(taskID);
+    };
+
+    $scope.toggleSelection = function (task) {
+        var index = $scope.getTaskIndex(task.id);
         var status = $rootScope.tasks[index].status === 'completed';
         $rootScope.tasks[index].status = !status ? 'completed' : 'needsAction';
 
-
-        if ($rootScope.tasks[index].status === 'needsAction' ) {
+        if ($rootScope.tasks[index].status === 'needsAction') {
             delete $rootScope.tasks[index].completed;
         }
-        // var preparedTask = convertDateToString(task);
-        $http.put('/', $rootScope.tasks[index]);
-        // $rootScope.tasks[index] = task;
+        $http.put('/', $rootScope.tasks[index]).then($rootScope.showToast('Task Updated!'));
     };
 
-    $scope.getShortDate = function(date){
-        return new Date(date).toLocaleDateString();
-    }
+    $rootScope.showToast = function (message) {
+        $mdToast.show(
+            $mdToast.simple()
+                .textContent(message)
+                .position('bottom left')
+                .hideDelay(3000)
+        );
+    };
 
-    $http.get('/tasks')
+    $scope.getShortDate = function (date) {
+        return new Date(date).toLocaleDateString();
+    };
+
+    $http.get('/isAuthed')
         .then(function (response) {
-            console.log(response.data);
-            $rootScope.tasks = response.data;
+            $rootScope.isAuthed = response.data;
+            if (response.data) {
+                $http.get('/tasks')
+                    .then(function (response) {
+                        $rootScope.tasks = response.data;
+                    });
+            }
+
         });
 
-    $scope.addTask = function (event, index) {
-        $scope.editing = angular.copy($scope.tasks[index]);
-        showDialog(index, true, event);
+    $scope.addTask = function (event, task) {
+        var index = $scope.getTaskIndex(task.id);
+        $scope.editing = angular.copy($rootScope.tasks[index]);
+
+        showDialog(task, true, event, index);
     };
 
-    $scope.selectTask = function (event, index) {
-        $scope.editing = angular.copy($scope.tasks[index]);
-        console.log('editing', $scope.editing);
-        showDialog(index, false, event);
+    $scope.selectTask = function (event, task) {
+        $scope.editing = angular.copy(task);
+        var index = $scope.getTaskIndex(task.id);
+        showDialog(task, false, event, index);
     };
 
-    function showDialog(index, isNewTask, event) {
-
+    function showDialog(task, isNewTask, event, seletedIndex) {
         $mdDialog.show({
             controller: DialogController,
             controllerAs: 'DialogController',
@@ -47,7 +84,8 @@ function AppCtrl($scope, $mdDialog, $http, $rootScope) {
             parent: angular.element(document.body),
             targetEvent: event,
             locals: {
-                selectedIndex: index,
+                selectedTaskID: task.id,
+                selectedIndex: seletedIndex,
                 isNewTask: isNewTask,
                 editing: $scope.editing
             }
@@ -59,19 +97,14 @@ function DialogController($scope, $mdDialog, locals, $http, $rootScope) {
     var selectedIndex = locals.selectedIndex;
     $scope.isNewTask = locals.isNewTask;
     $scope.editing = locals.editing;
-    console.log(locals.editing);
-    console.log(locals);
-    // $scope.myForm
     if (locals.editing === undefined) {
         $scope.isCompleted = false;
     } else {
         $scope.isCompleted = (locals.editing.status === 'completed');
     }
 
-
     if ($scope.isNewTask) {
         $scope.editing = {updated: todayDate};
-        console.log($scope.isNewTask, $scope.editing);
     }
     if ($scope.editing) {
         if ($scope.editing.hasOwnProperty('updated')) {
@@ -107,7 +140,7 @@ function DialogController($scope, $mdDialog, locals, $http, $rootScope) {
             data: task,
             dataType: "json",
             headers: {'Content-Type': 'application/json'}
-        });
+        }).then($rootScope.showToast('Task deleted!'));
         $rootScope.tasks.splice(selectedIndex, 1);
         $mdDialog.cancel();
     };
@@ -118,7 +151,7 @@ function DialogController($scope, $mdDialog, locals, $http, $rootScope) {
         if (!$scope.isCompleted) {
             delete preparedTask.completed;
         }
-        $http.put('/', preparedTask);
+        $http.put('/', preparedTask).then($rootScope.showToast('Task updated!'));
         $rootScope.tasks[selectedIndex] = preparedTask;
         $mdDialog.hide();
     };
@@ -130,7 +163,9 @@ function DialogController($scope, $mdDialog, locals, $http, $rootScope) {
     $scope.add = function (task) {
         $mdDialog.hide();
         var preparedTask = convertDateToString(task);
-        $http.post('/post', preparedTask);
+        $http.post('/post', preparedTask).then(function (res) {
+            $rootScope.tasks.unshift(res.data);
+        }).then($rootScope.showToast('Task added!')).then($scope.get());
     };
 
 

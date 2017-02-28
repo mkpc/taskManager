@@ -40,7 +40,10 @@
             <md-checkbox ng-model="isCompleted">
                 Completed
             </md-checkbox>
-            <div layout-align="center center" layout="row">
+            <div layout-align="end end" layout="row">
+                <md-button class=" md-raised" ng-click="cancel()">
+                    Cancel
+                </md-button>
                 <div ng-show="isNewTask">
                     <md-button class="md-primary md-raised" ng-click="add(editing)">
                         <span>Add</span>
@@ -56,9 +59,7 @@
                         Delete
                     </md-button>
                 </div>
-                <md-button class=" md-raised" ng-click="cancel()">
-                    Cancel
-                </md-button>
+
             </div>
         </form>
     </div>
