@@ -23,4 +23,3 @@ npm install
 node quickstart.js
 ```
 6. Go to browser enter "http://localhost:5000"
-7. Click sign in and have fun ;)
