@@ -27,8 +27,10 @@ function AppCtrl($mdDialog, $http, $rootScope, $mdToast) {
     }
 
     function signIn() {
+        var  windowReference= window.open();
+
         $http.get('/auth/tasks').then(function (response) {
-            window.open(response.data);
+            windowReference.location =response.data;
         })
     }
 
