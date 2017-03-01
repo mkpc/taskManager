@@ -5,7 +5,7 @@ angular
     .module('MyApp')
     .controller('DialogController', DialogController);
 
-function DialogController($mdDialog, locals, $http, $rootScope) {
+function DialogController($mdDialog, locals, $rootScope, common) {
     var todayDate = new Date();
     var vm = this;
     var selectedIndex = locals.selectedIndex;
@@ -51,14 +51,9 @@ function DialogController($mdDialog, locals, $http, $rootScope) {
     }
 
     function deleteTask(task) {
-        $http({
-            method: 'DELETE',
-            url: '/',
-            data: task,
-            dataType: "json",
-            headers: {'Content-Type': 'application/json'}
-        }).then($rootScope.showToast('Task deleted!'));
-        $rootScope.tasks.splice(selectedIndex, 1);
+        common.makeRequest('DELETE', '/', task)
+            .then(common.showToast('Task deleted!'))
+            .then($rootScope.tasks.splice(selectedIndex, 1));
         $mdDialog.cancel();
     }
 
@@ -68,8 +63,9 @@ function DialogController($mdDialog, locals, $http, $rootScope) {
         if (!vm.isCompleted) {
             delete preparedTask.completed;
         }
-        $http.put('/', preparedTask).then($rootScope.showToast("Task updated!"));
-        $rootScope.tasks[selectedIndex] = preparedTask;
+        common.makeRequest('PUT', '/', preparedTask)
+            .then(common.showToast("Task updated!"))
+            .then($rootScope.tasks[selectedIndex] = preparedTask);
         $mdDialog.hide();
     }
 
@@ -80,11 +76,12 @@ function DialogController($mdDialog, locals, $http, $rootScope) {
     function addTask(task) {
         $mdDialog.hide();
         var preparedTask = convertDateToString(task);
-        $http.post('/post', preparedTask).then(function (res) {
-            if ($rootScope.tasks === "" || $rootScope.tasks === "undefined" || $rootScope.tasks === null) {
-                $rootScope.tasks = [];
-            }
-            $rootScope.tasks.unshift(res.data);
-        }).then($rootScope.showToast("Task added!"));
+        common.makeRequest('POST', '/post', preparedTask)
+            .then(function (res) {
+                if ($rootScope.tasks === "" || $rootScope.tasks === "undefined" || $rootScope.tasks === null) {
+                    $rootScope.tasks = [];
+                }
+                $rootScope.tasks.unshift(res.data);
+            }).then(common.showToast("Task added!"));
     }
 }

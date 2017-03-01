@@ -99,7 +99,7 @@ app.delete('/', function (req, res) {
         task: req.body.id
     }, function (err, response) {
         if (err) {
-            console.log('The API returned an error: ' + err);
+            console.log('The delete API request returned an error: ' + err);
             return;
         }
         res.end();
@@ -116,7 +116,7 @@ app.put('/', function (req, res, next) {
 
     }, function (err, response) {
         if (err) {
-            console.log('The API returned an error: ' + err);
+            console.log('The put API request returned an error: ' + err);
             return;
         }
         res.send(response);
@@ -132,7 +132,7 @@ app.post('/post', function (req, res) {
         resource: req.body
     }, function (err, response) {
         if (err) {
-            console.log('The API returned an error: ' + err);
+            console.log('The post API request returned an error: ' + err);
             return;
         }
         res.send(response);

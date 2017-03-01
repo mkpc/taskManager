@@ -5,7 +5,7 @@ angular
     .module('MyApp')
     .controller('AppCtrl', AppCtrl);
 
-function AppCtrl($mdDialog, $http, $rootScope, $mdToast) {
+function AppCtrl($mdDialog, $http, $rootScope, common) {
     var vm = this;
 
     $rootScope.tasks = [];
@@ -27,10 +27,10 @@ function AppCtrl($mdDialog, $http, $rootScope, $mdToast) {
     }
 
     function signIn() {
-        var  windowReference= window.open();
+        var windowReference = window.open();
 
         $http.get('/auth/tasks').then(function (response) {
-            windowReference.location =response.data;
+            windowReference.location = response.data;
         })
     }
 
@@ -48,34 +48,23 @@ function AppCtrl($mdDialog, $http, $rootScope, $mdToast) {
         if ($rootScope.tasks[index].status === 'needsAction') {
             delete $rootScope.tasks[index].completed;
         }
-        $http.put('/', $rootScope.tasks[index]).then($rootScope.showToast('Task Updated!'));
+        $http.put('/', $rootScope.tasks[index]).then(common.showToast('Task Updated!'));
     }
-
-    $rootScope.showToast = function (message) {
-        //noinspection JSUnresolvedFunction
-        $mdToast.show(
-            $mdToast.simple()
-                .textContent(message)
-                .position('bottom left')
-                .hideDelay(3000)
-        );
-    };
 
     function getShortDate(date) {
         return new Date(date).toLocaleDateString();
     }
 
-    $http.get('/isAuthed')
+    common.makeRequest('GET', '/isAuthed', null)
         .then(function (response) {
             $rootScope.isAuthed = response.data;
             if (response.data) {
-                $http.get('/tasks')
-                    .then(function (response) {
-                        $rootScope.tasks = (response.data === "" ? [] : response.data);
-                    });
+                common.makeRequest('GET', '/tasks', null).then(function (response) {
+                    $rootScope.tasks = (response.data === "" ? [] : response.data);
+                });
             }
-
         });
+
     function addTask() {
         showDialog(null, true, null, null);
     }
