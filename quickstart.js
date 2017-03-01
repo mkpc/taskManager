@@ -69,7 +69,6 @@ function getTasklists() {
         if (items.length == 0) {
             console.log('No task lists found.');
         } else {
-            console.log(items[0].id);
             TASKLIST_ID = items[0].id;
         }
     });
@@ -142,8 +141,6 @@ app.post('/post', function (req, res) {
             console.log('The API returned an error: ' + err);
             return;
         }
-        console.log(response);
-
         res.send(response);
     });
 

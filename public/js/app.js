@@ -57,17 +57,14 @@ function AppCtrl($scope, $mdDialog, $http, $rootScope, $mdToast) {
             if (response.data) {
                 $http.get('/tasks')
                     .then(function (response) {
-                        $rootScope.tasks = response.data;
+                        $rootScope.tasks = (response.data === "" ? [] : response.data);
                     });
             }
 
         });
 
-    $scope.addTask = function (event, task) {
-        var index = $scope.getTaskIndex(task.id);
-        $scope.editing = angular.copy($rootScope.tasks[index]);
-
-        showDialog(task, true, event, index);
+    $scope.addTask = function () {
+        showDialog(null, true, null,null);
     };
 
     $scope.selectTask = function (event, task) {
@@ -84,7 +81,7 @@ function AppCtrl($scope, $mdDialog, $http, $rootScope, $mdToast) {
             parent: angular.element(document.body),
             targetEvent: event,
             locals: {
-                selectedTaskID: task.id,
+                selectedTaskID: (isNewTask ? -1 : task.id),
                 selectedIndex: seletedIndex,
                 isNewTask: isNewTask,
                 editing: $scope.editing
@@ -94,9 +91,11 @@ function AppCtrl($scope, $mdDialog, $http, $rootScope, $mdToast) {
 }
 function DialogController($scope, $mdDialog, locals, $http, $rootScope) {
     var todayDate = new Date();
+
     var selectedIndex = locals.selectedIndex;
     $scope.isNewTask = locals.isNewTask;
     $scope.editing = locals.editing;
+
     if (locals.editing === undefined) {
         $scope.isCompleted = false;
     } else {
@@ -161,9 +160,16 @@ function DialogController($scope, $mdDialog, locals, $http, $rootScope) {
     };
 
     $scope.add = function (task) {
+
         $mdDialog.hide();
         var preparedTask = convertDateToString(task);
         $http.post('/post', preparedTask).then(function (res) {
+
+            if( $rootScope.tasks === ""){
+                $rootScope.tasks = [];
+            }
+
+
             $rootScope.tasks.unshift(res.data);
         }).then($rootScope.showToast('Task added!')).then($scope.get());
     };
