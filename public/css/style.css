@@ -9,6 +9,7 @@ md-backdrop{
 
 .strike {
     text-decoration: line-through;
+    color: grey;
 }
 
 #taskMdList{

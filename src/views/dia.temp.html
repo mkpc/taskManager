@@ -2,8 +2,8 @@
     <div role="dialog" aria-label="Task Dialog" layout="column" layout-align="center center">
         <md-toolbar layout="row">
             <div class="md-toolbar-tools">
-                <span ng-show="isNewTask">Add a New Task</span>
-                <span ng-show="!isNewTask">Edit a Task</span>
+                <span ng-show="dialog.isNewTask">Add a New Task</span>
+                <span ng-show="!dialog.isNewTask">Edit a Task</span>
 
             </div>
         </md-toolbar>
@@ -12,50 +12,49 @@
             <div layout-gt-xs="row">
                 <md-input-container class="md-block" flex-gt-xs>
                     <label>Task Title</label>
-                    <input ng-model="editing.title">
+                    <input ng-model="dialog.editing.title">
                 </md-input-container>
 
 
             </div>
             <div layout-gt-xs="row">
-
                 <div layout-gt-xs="column">
                     <md-input-container class="md-block">
                         <label>Notes</label>
-                        <textarea ng-model="editing.notes" rows="5" md-select-on-focus=""></textarea>
+                        <textarea ng-model="dialog.editing.notes" rows="5" md-select-on-focus=""></textarea>
                     </md-input-container>
                 </div>
 
                 <div layout-gt-xs="column">
                     <md-input-container class="md-block">
                         <label>Created date</label>
-                        <md-datepicker disabled="" ng-model="editing.updated"></md-datepicker>
+                        <md-datepicker disabled="" ng-model="dialog.editing.updated"></md-datepicker>
                     </md-input-container>
                     <md-input-container>
                         <label>Due date</label>
-                        <md-datepicker ng-model="editing.due"></md-datepicker>
+                        <md-datepicker ng-model="dialog.diting.due"></md-datepicker>
                     </md-input-container>
                 </div>
             </div>
-            <md-checkbox ng-model="isCompleted">
+            <md-checkbox ng-model="dialog.isCompleted">
                 Completed
             </md-checkbox>
             <div layout-align="end end" layout="row">
-                <md-button class=" md-raised" ng-click="cancel()">
+                <md-button class=" md-raised" ng-click="dialog.cancelDialog()">
                     Cancel
                 </md-button>
-                <div ng-show="isNewTask">
-                    <md-button class="md-primary md-raised" ng-click="add(editing)">
+                <div ng-show="dialog.isNewTask">
+                    <md-button class="md-primary md-raised" ng-click="dialog.addTask(dialog.editing)">
                         <span>Add</span>
                     </md-button>
 
                 </div>
 
-                <div ng-show="!isNewTask">
-                    <md-button class="md-primary md-raised" ng-click="saveTask(editing)">
+                <div ng-show="!dialog.isNewTask">
+                    <md-button class="md-primary md-raised" ng-click="dialog.saveTask(dialog.editing)">
                         <span>Save</span>
                     </md-button>
-                    <md-button class="md-warn md-raised" ng-click="delete(editing)">
+                    <md-button class="md-warn md-raised" ng-click="dialog.deleteTask(dialog.editing)">
                         Delete
                     </md-button>
                 </div>

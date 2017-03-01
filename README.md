@@ -11,7 +11,7 @@ This application require user to login with their own Google account to manage t
 1. Download and clone this repo
 2. Open up Command line on Window or Terminal on Mac
 3. Open the project root in Terminal
-4. Type and enter 'npm install'
-5. Type and enter 'node quickstart.js'
-6. Go to browser enter "http://localhost:5000"
+4. Type and enter `npm install`
+5. Type and enter `node quickstart.js`
+6. Go to browser enter `http://localhost:5000`
 7. Click sign in and have fun ;)

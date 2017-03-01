@@ -1,0 +1,1 @@
+angular.module('MyApp', ['ngRoute', 'ngMaterial', 'ngMessages', 'ngResource', 'ngMdIcons']);
